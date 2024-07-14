@@ -1,3 +1,14 @@
+/*
+    Partial generational garbage collector to perform memory allocation, relocation, compaction, and release operations
+    Filename: garbageCollector.c
+    Author: Beckett Morris
+    Date: 004/20/2024
+    Course: COMP 2361
+    Assignment: Project 1 - Partial Generational Garbage Collector
+    Collaborators: Jessica Grossi
+    Internet Source: None
+*/
+
 #include <stdio.h>
 #include <string.h>
 
