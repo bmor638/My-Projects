@@ -1,3 +1,14 @@
+/*
+    Implementation of RSA to encrypt and decrypt messages with modular exponentiation; includes the Solovay-Strassen primality test
+    Filename: RSA.java
+    Author: Beckett Morris
+    Date: 04/28/2024
+    Course: COMP 3705
+    Assignment: Project 3 - RSA
+    Collaborators: None
+    Internet Source: None
+*/
+
 package part2;
 
 import java.util.*;
@@ -7,189 +18,186 @@ import java.math.BigInteger;
 public class Part2 {
 	
     public static void main(String[] args) {
-    	
-    	System.out.println(solovayStrassen(new BigInteger("15373"), 55));
-    	System.out.println("Numerical confidence that the number is prime: " + (1-stillCompositeProbability(55)));
     	   	
     	// get user input for file paths for n, e, d, and ascii text
-//    	Scanner scanner = new Scanner(System.in);
-//    	
-//    	System.out.println("Would you like to generate a key (G), encrypt text (E), or decrypt text (D)? ");
-//    	String option = scanner.nextLine();
-//    	
-//    	if (option.equals("G")) {
-//    		
-//    		// find prime values for 'p' and 'q' using Solovay-Strassen
-//    		BigInteger p = findPrime();
-//    		BigInteger q = findPrime();
-//    		
-//    		// calculate 'n' by multiplying 'p' and 'q'
-//    		BigInteger n = p.multiply(q);
-//    		
-//    		// save 'n' to file 'newN.txt'
-//    		try {
-//				FileWriter nWriter = new FileWriter("newN.txt");
-//				nWriter.write(n.toString());
-//				nWriter.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//    		
-//    		// find a random value for 'e' that is relatively prime to phi of 'n'
-//    		BigInteger phiN = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-//    		Random random = new Random();
-//    		BigInteger e;
-//    		do {
-//    			e = new BigInteger(phiN.bitLength(), random);
-//    		} while (!e.gcd(phiN).equals(BigInteger.ONE));
-//    		
-//    		// save 'e' to file 'newE.txt'
-//    		try {
-//				FileWriter eWriter = new FileWriter("newE.txt");
-//				eWriter.write(e.toString());
-//				eWriter.close();
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
-//    		
-//    		// find 'd' (the inverse of 'e' mod 'phiN')
-//    		BigInteger d = e.modInverse(phiN);
-//    		
-//    		// save 'd' to file 'newD.txt'
-//    		try {
-//				FileWriter dWriter = new FileWriter("newD.txt");
-//				dWriter.write(d.toString());
-//				dWriter.close();
-//			} catch (IOException e2) {
-//				e2.printStackTrace();
-//			}
-//    		
-//    		System.out.println("\nAll done! Your keys have been written to files \"newN.txt\", \"newE.txt\", and \"newD.txt\" respectively.");
-//    		
-//    	} else if (option.equals("E") || option.equals("D")) {
-//    	
-//    		// get user input for file path to 'n'
-//	    	System.out.println("Enter file path for n: ");
-//	    	String nFilePath = scanner.nextLine();
-//	    	
-//	    	// get user input for file path to 'e'
-//	    	System.out.println("\nEnter file path for e: ");
-//	    	String eFilePath = scanner.nextLine();
-//	    	
-//	    	// deal with 'd' only if decrypting
-//	    	BigInteger d = null;
-//	    	if (option.equals("D")) {
-//	    		
-//	    		// get user input for file path to 'd'
-//		    	System.out.println("\nEnter file path for d: ");
-//		    	String dFilePath = scanner.nextLine();
-//		    	
-//		    	// read in 'd' from 'dFile'
-//		    	File dFile = new File(dFilePath);
-//		    	Scanner dScanner = null;
-//				try {
-//					dScanner = new Scanner(dFile);
-//				} catch (FileNotFoundException e1) {
-//					e1.printStackTrace();
-//				}
-//				
-//		    	while (dScanner.hasNextBigInteger()) {
-//		    		d = dScanner.nextBigInteger();
-//		    	}
-//		    	
-//		    	dScanner.close();
-//	    	}
-//	    	
-//	    	// get user input for file path to ascii text
-//	    	System.out.println("\nEnter file path for content: ");
-//	    	String file = scanner.nextLine();
-//    	
-//	    	// read in 'n' from 'nFile'
-//	    	File nFile = new File(nFilePath);
-//	    	Scanner nScanner = null;
-//			try {
-//				nScanner = new Scanner(nFile);
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			}
-//	    	BigInteger n = null;
-//	    	while (nScanner.hasNextBigInteger()) {
-//	    		n = nScanner.nextBigInteger();
-//	    	}
-//	    	
-//	    	nScanner.close();
-//    	
-//   
-//	    	// read in 'e' from 'eFile'
-//	    	File eFile = new File(eFilePath);
-//	    	Scanner eScanner = null;
-//			try {
-//				eScanner = new Scanner(eFile);
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			}
-//	    	BigInteger e = null;
-//	    	while (eScanner.hasNextBigInteger()) {
-//	    		e = eScanner.nextBigInteger();
-//	    	}
-//	    	
-//	    	eScanner.close();
-//	    	
-//	    	// perform encryption operations
-//	    	if (option.equals("E")) {
-//	    		
-//		    	// call 'readToBytes' function to get a byte array of the ascii text
-//		        byte[] bytes = null;
-//		        try {
-//		        
-//					bytes = readToBytes(file);
-//				
-//		        } catch (FileNotFoundException e1) {
-//					e1.printStackTrace();
-//				}
-//		        
-//		        // break 'bytes' into 214-byte blocks
-//		        ArrayList<BigInteger> blocks = breakIntoBlocks(bytes);
-//		    		
-//		        // perform encryption
-//		        ArrayList<BigInteger> ciphertextBlocks = encryptBlocks(blocks, e, n);
-//		        
-//		        // print encrypted ciphertext blocks
-//		        System.out.println("Encrypted ciphertext:\n");
-//		        for (BigInteger block : ciphertextBlocks) {
-//		        	System.out.print(block.toString() + "\n");
-//		        }
-//		        
-//	    	} else if (option.equals("D")) {
-//	    		
-//	    		// add blocks from 'file' to array list
-//	    		ArrayList<BigInteger> blocks = new ArrayList<BigInteger>();
-//	    		
-//	    		// read in blocks from 'file'
-//		    	File fileObj = new File(file);
-//		    	Scanner fileScanner = null;
-//				try {
-//					fileScanner = new Scanner(fileObj);
-//				} catch (FileNotFoundException e1) {
-//					e1.printStackTrace();
-//				}
-//				
-//				// add block to list
-//		    	while (fileScanner.hasNextBigInteger()) {
-//		    		blocks.add(fileScanner.nextBigInteger());
-//		    	}
-//		    	
-//		    	fileScanner.close();
-//
-//		        // perform decryption on 'ciphertextBlocks'
-//		        String plaintext = decryptBlocks(blocks, d, n);
-//		        
-//		        // print decrypted ciphertext
-//		        System.out.println("\nDecrypted ciphertext:\n" + plaintext);
-//		    	}
-//    		}
-//        
-//        scanner.close();
+   	Scanner scanner = new Scanner(System.in);
+   	
+   	System.out.println("Would you like to generate a key (G), encrypt text (E), or decrypt text (D)? ");
+   	String option = scanner.nextLine();
+   	
+   	if (option.equals("G")) {
+   		
+   		// find prime values for 'p' and 'q' using Solovay-Strassen
+   		BigInteger p = findPrime();
+   		BigInteger q = findPrime();
+   		
+   		// calculate 'n' by multiplying 'p' and 'q'
+   		BigInteger n = p.multiply(q);
+   		
+   		// save 'n' to file 'newN.txt'
+   		try {
+				FileWriter nWriter = new FileWriter("newN.txt");
+				nWriter.write(n.toString());
+				nWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+   		
+   		// find a random value for 'e' that is relatively prime to phi of 'n'
+   		BigInteger phiN = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+   		Random random = new Random();
+   		BigInteger e;
+   		do {
+   			e = new BigInteger(phiN.bitLength(), random);
+   		} while (!e.gcd(phiN).equals(BigInteger.ONE));
+   		
+   		// save 'e' to file 'newE.txt'
+   		try {
+				FileWriter eWriter = new FileWriter("newE.txt");
+				eWriter.write(e.toString());
+				eWriter.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+   		
+   		// find 'd' (the inverse of 'e' mod 'phiN')
+   		BigInteger d = e.modInverse(phiN);
+   		
+   		// save 'd' to file 'newD.txt'
+   		try {
+				FileWriter dWriter = new FileWriter("newD.txt");
+				dWriter.write(d.toString());
+				dWriter.close();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+   		
+   		System.out.println("\nAll done! Your keys have been written to files \"newN.txt\", \"newE.txt\", and \"newD.txt\" respectively.");
+   		
+   	} else if (option.equals("E") || option.equals("D")) {
+   	
+   		// get user input for file path to 'n'
+	    	System.out.println("Enter file path for n: ");
+	    	String nFilePath = scanner.nextLine();
+	    	
+	    	// get user input for file path to 'e'
+	    	System.out.println("\nEnter file path for e: ");
+	    	String eFilePath = scanner.nextLine();
+	    	
+	    	// deal with 'd' only if decrypting
+	    	BigInteger d = null;
+	    	if (option.equals("D")) {
+	    		
+	    		// get user input for file path to 'd'
+		    	System.out.println("\nEnter file path for d: ");
+		    	String dFilePath = scanner.nextLine();
+		    	
+		    	// read in 'd' from 'dFile'
+		    	File dFile = new File(dFilePath);
+		    	Scanner dScanner = null;
+				try {
+					dScanner = new Scanner(dFile);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				
+		    	while (dScanner.hasNextBigInteger()) {
+		    		d = dScanner.nextBigInteger();
+		    	}
+		    	
+		    	dScanner.close();
+	    	}
+	    	
+	    	// get user input for file path to ascii text
+	    	System.out.println("\nEnter file path for content: ");
+	    	String file = scanner.nextLine();
+   	
+	    	// read in 'n' from 'nFile'
+	    	File nFile = new File(nFilePath);
+	    	Scanner nScanner = null;
+			try {
+				nScanner = new Scanner(nFile);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+	    	BigInteger n = null;
+	    	while (nScanner.hasNextBigInteger()) {
+	    		n = nScanner.nextBigInteger();
+	    	}
+	    	
+	    	nScanner.close();
+   	
+  
+	    	// read in 'e' from 'eFile'
+	    	File eFile = new File(eFilePath);
+	    	Scanner eScanner = null;
+			try {
+				eScanner = new Scanner(eFile);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+	    	BigInteger e = null;
+	    	while (eScanner.hasNextBigInteger()) {
+	    		e = eScanner.nextBigInteger();
+	    	}
+	    	
+	    	eScanner.close();
+	    	
+	    	// perform encryption operations
+	    	if (option.equals("E")) {
+	    		
+		    	// call 'readToBytes' function to get a byte array of the ascii text
+		        byte[] bytes = null;
+		        try {
+		        
+					bytes = readToBytes(file);
+				
+		        } catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+		        
+		        // break 'bytes' into 214-byte blocks
+		        ArrayList<BigInteger> blocks = breakIntoBlocks(bytes);
+		    		
+		        // perform encryption
+		        ArrayList<BigInteger> ciphertextBlocks = encryptBlocks(blocks, e, n);
+		        
+		        // print encrypted ciphertext blocks
+		        System.out.println("Encrypted ciphertext:\n");
+		        for (BigInteger block : ciphertextBlocks) {
+		        	System.out.print(block.toString() + "\n");
+		        }
+		        
+	    	} else if (option.equals("D")) {
+	    		
+	    		// add blocks from 'file' to array list
+	    		ArrayList<BigInteger> blocks = new ArrayList<BigInteger>();
+	    		
+	    		// read in blocks from 'file'
+		    	File fileObj = new File(file);
+		    	Scanner fileScanner = null;
+				try {
+					fileScanner = new Scanner(fileObj);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				
+				// add block to list
+		    	while (fileScanner.hasNextBigInteger()) {
+		    		blocks.add(fileScanner.nextBigInteger());
+		    	}
+		    	
+		    	fileScanner.close();
+
+		        // perform decryption on 'ciphertextBlocks'
+		        String plaintext = decryptBlocks(blocks, d, n);
+		        
+		        // print decrypted ciphertext
+		        System.out.println("\nDecrypted ciphertext:\n" + plaintext);
+		    	}
+   		}
+       
+       scanner.close();
     }
 
 
