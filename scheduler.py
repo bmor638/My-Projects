@@ -1,3 +1,6 @@
+# Preemptive round-robin scheduler with priorities, arrival handling, and I/O blocking using Python priority queues
+# Simulates CPU execution, preemption, blocking, termination, and computes average turnaround time
+
 from queue import PriorityQueue
 import sys
 
