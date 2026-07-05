@@ -1,3 +1,3 @@
 # My-Projects
 
-A repository for all of my prominent high school and college projects
+A repository for some of my prominent projects.
